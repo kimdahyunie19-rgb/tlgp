@@ -48,7 +48,7 @@ function checkLogin() {
     const pass = document.getElementById('log-pass').value;
     const err = document.getElementById('log-err');
 
-    if(email === "tlgpwhse3@gmail.com" && pass === "pogi si jowin") {
+    if(email === "tlgpwhse3@gmail.com" && pass === "canon") {
         document.getElementById('login-overlay').style.display = 'none';
         sessionStorage.setItem('j_auth', 'true');
     } else {
@@ -217,4 +217,5 @@ const v=(id)=>document.getElementById(id).value;
 const save = () => { 
     rdb.ref('j_db').set(db); 
     rdb.ref('j_lg').set(logs); 
+
 };
