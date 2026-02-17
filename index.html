@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JOWIN WMS PRO - Modular</title>
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+</head>
+<body>
+
+<div id="login-overlay">
+    <div class="login-card">
+        <h1>TLGP WMS ADMIN</h1>
+        <input type="email" id="log-email" placeholder="Email Address">
+        <input type="password" id="log-pass" placeholder="Password">
+        <button onclick="checkLogin()">LOGIN SYSTEM</button>
+        <p id="log-err" style="color:red; font-size:10px; margin-top:10px; display:none;">Invalid Email or Password!</p>
+    </div>
+</div>
+
+<aside class="sidebar">
+    <h2>TLGP WMS</h2>
+    <button class="nav-btn active" onclick="sh('inv', this)">📦 INVENTORY LIST</button>
+    <button class="nav-btn" onclick="sh('his', this)">📜 SYSTEM LOGS</button>
+    
+    <div style="margin-top:15px">
+        <label style="font-size:10px; color:var(--blue); font-weight:bold;">EXCEL BULK IMPORT</label>
+        <textarea id="xl" style="width:100%; height:80px; background:#111; color:#2ecc71; font-size:10px; padding:8px; resize:none; margin-top:5px;" placeholder="Loc	Code	Lot..."></textarea>
+        <button class="btn btn-blue" style="width:100%; padding:8px; margin-top:5px;" onclick="imp()">PROCESS IMPORT</button>
+    </div>
+
+    <button class="btn btn-grey" style="width:100%; margin-top:20px; padding:10px;" onclick="un()">↩️ UNDO ACTION</button>
+    <button class="btn btn-red" style="width:100%; margin-top:auto; padding:10px;" onclick="mr()">⚠️ MASTER RESET</button>
+</aside>
+
+<main class="main">
+    <div id="v-inv" class="view active">
+        <div class="stats">
+            <div class="s-box" style="background:#2c3e50"><span class="s-val" id="s-q">0</span><span class="s-lbl">Total Qty</span></div>
+            <div class="s-box" style="background:var(--blue)"><span class="s-val" id="s-l">0</span><span class="s-lbl">Occupied Locs</span></div>
+            <div class="s-box" style="background:var(--green)"><span class="s-val" id="s-p">0</span><span class="s-lbl">Passed</span></div>
+            <div class="s-box" style="background:var(--yellow);color:#000"><span class="s-val" id="s-h">0</span><span class="s-lbl">Hold</span></div>
+            <div class="s-box" style="background:var(--red)"><span class="s-val" id="s-f">0</span><span class="s-lbl">Failed</span></div>
+        </div>
+
+        <div class="filter-bar">
+            <strong>⚙️ OPTIONS:</strong>
+            <select id="f-view" onchange="re()" style="width: 150px;">
+                <option value="all">SHOW ALL</option>
+                <option value="occupied">OCCUPIED</option>
+                <option value="empty">EMPTY</option>
+            </select>
+            <label style="margin-left:15px; font-weight:bold; color:var(--green); cursor:pointer;">
+                <input type="checkbox" id="fifo-check" onchange="re()"> ENABLE FIFO SORTING
+            </label>
+        </div>
+
+        <section class="card">
+            <input type="hidden" id="e-idx" value="-1">
+            <div class="igrid">
+                <input list="loc-list" id="i-loc" placeholder="Location (ex: TRA0101)" maxlength="7">
+                <datalist id="loc-list"></datalist>
+                <input type="text" id="i-cod" placeholder="Item Code">
+                <input type="text" id="i-lot" placeholder="Lot Number">
+                <select id="i-sts">
+                    <option value="PASSED">PASSED</option><option value="HOLD">HOLD</option>
+                    <option value="UNDER QA">UNDER QA</option><option value="FAILED">FAILED</option>
+                </select>
+                <input type="number" id="i-qty" placeholder="Quantity">
+                <input type="text" id="i-pal" placeholder="Pallet ID">
+                <input type="text" id="i-dr" placeholder="DR/Invoice">
+                <input type="date" id="i-dat">
+                <select id="i-typ" onchange="map()"><option value="">--Type--</option><option value="RESIN">RESIN</option><option value="FILM">FILM</option><option value="MOLDED PARTS">MOLDED PARTS</option><option value="UN-STERILE">UN-STERILE</option><option value="PACKAGING">PACKAGING</option></select>
+                <input type="text" id="i-acc" placeholder="Acc#" readonly style="background:#eee;">
+            </div>
+            <button class="btn btn-blue" style="width:100%; margin-top:8px; padding:10px;" onclick="sv()">💾 SAVE ENTRY</button>
+        </section>
+
+        <div class="t-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th width="75">Location</th><th width="140">Item Code</th><th width="100">Lot No.</th><th width="80">Qty</th>
+                        <th width="90">Status</th><th width="80">Pallet</th><th width="100">DR/Inv</th><th width="90">Date</th>
+                        <th width="100">Type</th><th width="50">Acc</th><th width="130">Action</th>
+                    </tr>
+                    <tr class="search-row" style="background:#f8f9fa;">
+                        <th><input class="c-src" placeholder="Search Loc..." oninput="re()"></th>
+                        <th><input class="c-src" placeholder="Code..." oninput="re()"></th>
+                        <th><input class="c-src" placeholder="Lot..." oninput="re()"></th>
+                        <th><input class="c-src" placeholder="Qty..." oninput="re()"></th>
+                        <th><input class="c-src" placeholder="Sts..." oninput="re()"></th>
+                        <th><input class="c-src" placeholder="Pal..." oninput="re()"></th>
+                        <th><input class="c-src" placeholder="DR..." oninput="re()"></th>
+                        <th><input class="c-src" placeholder="Date..." oninput="re()"></th>
+                        <th><input class="c-src" placeholder="Type..." oninput="re()"></th>
+                        <th><input class="c-src" placeholder="Acc..." oninput="re()"></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="b-inv"></tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div id="v-his" class="view">
+        <div class="tabs">
+            <button class="tab-btn active" id="tab-inc" onclick="changeLogTab('inc', this)">📥 TRANSFER</button>
+            <button class="tab-btn" id="tab-pull" onclick="changeLogTab('pull', this)">📤 PULL-OUTS</button>
+            <button class="tab-btn" id="tab-upd" onclick="changeLogTab('upd', this)">📝 UPDATES/DEL</button>
+        </div>
+
+        <div class="log-filter-area">
+            <div class="log-filter-group"><label>LOCATION:</label><input type="text" id="log-loc-filter" placeholder="Ex: TRA0101" oninput="renderLogs()"></div>
+            <div class="log-filter-group"><label>ITEM CODE:</label><input type="text" id="log-cod-filter" placeholder="Ex: ITEM123" oninput="renderLogs()"></div>
+            <div class="log-filter-group"><label>LOT NO:</label><input type="text" id="log-lot-filter" placeholder="Ex: LOT001" oninput="renderLogs()"></div>
+            <div class="log-filter-group"><label>QUANTITY:</label><input type="text" id="log-qty-filter" placeholder="Ex: 500" oninput="renderLogs()"></div>
+        </div>
+
+        <div id="h-wrap" class="t-wrap">
+            <table id="log-table">
+                <thead>
+                    <tr>
+                        <th width="150">Timestamp</th><th width="100">Action</th><th width="80">Loc</th><th width="120">Item Code</th>
+                        <th width="100">Lot Number</th><th width="80">Qty</th><th width="90">Status</th><th width="100">DR/Invoice</th>
+                        <th width="100">Item Type</th><th width="60">Acc #</th>
+                    </tr>
+                </thead>
+                <tbody id="log-body"></tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

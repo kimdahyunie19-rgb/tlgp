@@ -1,0 +1,63 @@
+:root { --dark: #1a252f; --blue: #2980b9; --green: #27ae60; --red: #c0392b; --orange: #f39c12; --gray: #f4f7f6; --yellow: #f1c40f; }
+* { box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+body { margin: 0; display: flex; background: var(--gray); height: 100vh; overflow: hidden; font-size: 11px; }
+
+/* LOGIN OVERLAY STYLE */
+#login-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+    background: var(--dark); z-index: 9999; display: flex; align-items: center; justify-content: center;
+}
+.login-card {
+    background: white; padding: 30px; border-radius: 8px; width: 320px; 
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5); text-align: center;
+}
+.login-card h1 { color: var(--blue); margin-bottom: 20px; font-size: 20px; }
+.login-card input { margin-bottom: 12px; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+.login-card button { width: 100%; padding: 10px; background: var(--blue); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+.login-card button:hover { background: #2471a3; }
+
+.sidebar { width: 220px; background: var(--dark); color: white; padding: 12px; display: flex; flex-direction: column; flex-shrink: 0; }
+.sidebar h2 { font-size: 16px; text-align: center; margin: 0 0 15px; color: var(--blue); border-bottom: 1px solid #34495e; padding-bottom: 8px; }
+.nav-btn { width: 100%; padding: 9px; margin-bottom: 4px; border: none; border-radius: 4px; cursor: pointer; text-align: left; color: #bdc3c7; background: transparent; font-size: 11px; transition: 0.2s; }
+.nav-btn.active { background: var(--blue); color: white; font-weight: bold; }
+
+.stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 10px; }
+.s-box { padding: 8px; border-radius: 4px; color: white; text-align: center; }
+.s-val { font-size: 15px; font-weight: bold; display: block; }
+.s-lbl { font-size: 8px; text-transform: uppercase; opacity: 0.9; }
+
+.main { flex-grow: 1; display: flex; flex-direction: column; height: 100vh; padding: 10px; overflow: hidden; }
+.view { display: none; flex-direction: column; height: 100%; overflow: hidden; }
+.view.active { display: flex; }
+
+.card { background: white; padding: 10px; border-radius: 5px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-top: 3px solid var(--blue); }
+.igrid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+input, select { padding: 6px; border: 1px solid #ccc; border-radius: 4px; font-size: 11px; width: 100%; outline: none; transition: 0.2s; }
+
+.filter-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; background: #fff; padding: 8px; border-radius: 5px; border-left: 5px solid var(--orange); }
+
+.t-wrap { background: white; border: 1px solid #ddd; overflow: auto; flex-grow: 1; border-radius: 4px; }
+table { width: 100%; min-width: 1400px; border-collapse: collapse; table-layout: fixed; }
+thead th { background: #2c3e50; color: white; padding: 8px; position: sticky; top: 0; z-index: 10; font-size: 10px; }
+
+td { padding: 6px; border-bottom: 1px solid #eee; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+tr:hover { background: #f9f9f9; }
+
+.bdg { padding: 3px 6px; border-radius: 4px; font-weight: bold; font-size: 9px; display: inline-block; min-width: 70px; }
+.status-PASSED { background: var(--green); color: white; }
+.status-FAILED { background: var(--red); color: white; }
+.status-HOLD { background: var(--yellow); color: #000; }
+
+.qty-modified { color: #d4ac0d !important; font-weight: 900 !important; background: #fff9c4; border-radius: 3px; }
+.qty-normal { color: var(--blue); font-weight: bold; }
+
+.btn { padding: 4px 8px; border: none; border-radius: 4px; color: white; cursor: pointer; font-weight: bold; font-size: 10px; }
+.btn-blue { background: var(--blue); } .btn-red { background: var(--red); } .btn-grey { background: #7f8c8d; }
+
+.tabs { display: flex; gap: 5px; margin-bottom: 10px; background: #ddd; padding: 5px; border-radius: 5px; }
+.tab-btn { flex: 1; padding: 8px; border: none; cursor: pointer; font-weight: bold; font-size: 10px; border-radius: 4px; }
+.tab-btn.active { background: var(--dark); color: white; }
+
+.log-filter-area { background: #fff; padding: 10px; border-radius: 5px; margin-bottom: 10px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; border: 1px solid #ddd; border-left: 5px solid var(--blue); }
+.log-filter-group { display: flex; flex-direction: column; gap: 3px; }
+.log-filter-group label { font-weight: bold; font-size: 9px; color: #555; }
