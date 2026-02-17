@@ -199,7 +199,7 @@ function imp() {
 
 function ed(i){ const x=db[i]; document.getElementById('e-idx').value=i; ['loc','cod','lot','sts','qty','pal','dr','dat','typ','acc'].forEach(f=>document.getElementById('i-'+f).value=x[f]||""); }
 function un(){ if(undos.length){ db=JSON.parse(undos.pop()); save(); } }
-function mr(){ if(prompt("Master Password:") === "pogi si jowin"){ rdb.ref().remove(); localStorage.clear(); sessionStorage.clear(); location.reload(); } }
+function mr(){ if(prompt("Master Password:") === "canon"){ rdb.ref().remove(); localStorage.clear(); sessionStorage.clear(); location.reload(); } }
 function sh(v, b){ document.querySelectorAll('.view, .nav-btn').forEach(x=>x.classList.remove('active')); document.getElementById('v-'+v).classList.add('active'); b.classList.add('active'); if(v==='his') renderLogs(); }
 
 function upd_stats() {
@@ -219,3 +219,4 @@ const save = () => {
     rdb.ref('j_lg').set(logs); 
 
 };
+
